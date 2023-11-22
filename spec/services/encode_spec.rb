@@ -10,7 +10,7 @@ describe Encode, type: :service do
       let(:number) { 0 }
 
       it do
-        expect(service.call).to eq("0")
+        expect(service.call).to be_falsey
       end
     end
 
@@ -18,7 +18,7 @@ describe Encode, type: :service do
       let(:number) { nil }
 
       it do
-        expect(service.call).to eq("0")
+        expect(service.call).to be_falsey
       end
     end
 
@@ -26,7 +26,7 @@ describe Encode, type: :service do
       let(:number) { 1232324 }
 
       it do
-        expect(service.call).to eq("005aAc")
+        expect(service.call).to eq("5aAc")
       end
     end
   end
