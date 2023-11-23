@@ -6,8 +6,13 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Defines the root path route ("/")
-  # root "posts#index"
+  
+  resources :link, only: [:index, :show]
+  get '/:short_code', to: 'link#show'
+
   namespace :api do
     resources :shorten, only: [:create]
   end
+
+  root "link#index"
 end
