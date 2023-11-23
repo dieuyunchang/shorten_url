@@ -52,6 +52,7 @@ group :development, :test do
 
   gem 'rspec-rails', '~> 6.1.0'
   gem 'factory_bot_rails'
+  gem 'pry-rails'
 end
 
 group :development do
@@ -67,3 +68,6 @@ group :development do
   gem "error_highlight", ">= 0.4.0", platforms: [:ruby]
 end
 
+group :test do
+  gem 'shoulda-matchers', '~> 5.0'
+end
