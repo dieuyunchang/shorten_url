@@ -28,7 +28,7 @@ class CreateShortenLink < ApplicationService
   attr_reader :url
 
   def shortened_link(code)
-    "http://localhost:3000/#{code}" # update to use env for main url
+    "#{ENV["HOST_URL"]}#{code}" # update to use env for main url
   end
 
   def find_duplicate

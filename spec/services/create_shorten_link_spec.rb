@@ -37,7 +37,7 @@ describe CreateShortenLink, type: :service do
 
         it do
           shortened_link = service.call.shortened_link
-          expect(shortened_link).to eq("http://localhost:3000/Abcdef")
+          expect(shortened_link).to eq("#{ENV["HOST_URL"]}Abcdef")
         end
       end
 
@@ -52,7 +52,7 @@ describe CreateShortenLink, type: :service do
             aggregate_failures do
               expect(result.errors).to be_blank
               expect(ShortenedUrl.all.count).to eq(1)
-              expect(result.shortened_link).to eq("http://localhost:3000/#{short_code}")
+              expect(result.shortened_link).to eq("#{ENV["HOST_URL"]}#{short_code}")
             end
           end
         end
