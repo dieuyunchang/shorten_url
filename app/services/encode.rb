@@ -1,5 +1,5 @@
 class Encode
-  ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".freeze
+  ALPHABET = "1nxNI0mFiJ8TgbopqrvyuswctOfaMWL7C5k9SG6EDhBHejK42dzPQRAlUV3XYZ".freeze
   BASE = ALPHABET.length # can move to ENV
   MAX_LENGTH = 6
 

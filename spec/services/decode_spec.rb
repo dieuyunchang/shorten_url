@@ -23,7 +23,7 @@ describe Decode, type: :service do
     end
 
     context "when string is not empty" do
-      let(:string) { "5aAc" }
+      let(:string) { "08Sg" }
 
       it do
         expect(service.call).to eq(1232324)

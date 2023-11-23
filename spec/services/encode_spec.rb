@@ -26,7 +26,7 @@ describe Encode, type: :service do
       let(:number) { 1232324 }
 
       it do
-        expect(service.call).to eq("5aAc")
+        expect(service.call).to eq("08Sg")
       end
     end
   end
