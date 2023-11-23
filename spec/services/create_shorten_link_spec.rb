@@ -2,11 +2,11 @@
 
 require "rails_helper"
 
-describe CreateUrlShortenCode, type: :service do
+describe CreateShortenLink, type: :service do
   subject(:service) { described_class.new(url) }
   
   describe "#call" do
-    context "when url is nil" do
+    context "when url is nil" do  
       let(:url) { nil }
 
       it do
@@ -42,16 +42,30 @@ describe CreateUrlShortenCode, type: :service do
       end
 
       context "when url is not existed" do
-        let(:url) { "https://google.com" }
-        
-        it do
-          result = service.call
-          short_code = ShortenedUrl.last.short_code
+        context "with url is valid" do
+          let(:url) { "https://google.com" }
+          
+          it do
+            result = service.call
+            short_code = ShortenedUrl.last.short_code
 
-          aggregate_failures do
-            expect(result.errors).to be_blank
-            expect(ShortenedUrl.all.count).to eq(1)
-            expect(result.shortened_link).to eq("http://localhost:3000/#{short_code}")
+            aggregate_failures do
+              expect(result.errors).to be_blank
+              expect(ShortenedUrl.all.count).to eq(1)
+              expect(result.shortened_link).to eq("http://localhost:3000/#{short_code}")
+            end
+          end
+        end
+
+        context "with url is invalid" do
+          let(:url) { "google" }
+          
+          it do
+            result = service.call
+  
+            aggregate_failures do
+              expect(result.errors.full_messages).to eq(["Original url is invalid"])
+            end
           end
         end
       end
