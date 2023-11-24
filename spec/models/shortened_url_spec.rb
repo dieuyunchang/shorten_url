@@ -18,15 +18,5 @@ describe ShortenedUrl, type: :model do
         end
       end
     end
-
-    describe 'when updating' do
-      context 'with short_code is nil' do
-        it do
-          shortened_url = create(:shortened_url, short_code: nil)
-          shortened_url.valid?
-          expect(shortened_url.errors[:short_code]).to include("can't be blank")
-        end
-      end
-    end
   end
 end

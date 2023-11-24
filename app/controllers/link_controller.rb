@@ -4,9 +4,9 @@ class LinkController < ApplicationController
   def show
     short_code = params[:short_code]
 
-    shortened_url = ShortenedUrl.find_by_short_code short_code
-    if shortened_url
-      redirect_to shortened_url.original_url, allow_other_host: true 
+    original_url = OriginalUrlFinder.new(short_code).find
+    if original_url
+      redirect_to original_url, allow_other_host: true 
     else
       raise ActiveRecord::RecordNotFound
     end

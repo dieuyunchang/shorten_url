@@ -17,7 +17,7 @@ describe CreateShortenLink, type: :service do
     end
 
     context "when url is an empty string" do
-      let(:url) { nil }
+      let(:url) { "" }
 
       it do
         result = service.call
@@ -29,15 +29,16 @@ describe CreateShortenLink, type: :service do
     context "when url is not empty" do
       context "when url existed" do
         let(:url) { "https://google.com" }
-        
-        before do
-          sanitize_url = url.strip.downcase.gsub /(https?:\/\/|(www\.))/, ""
-          create(:shortened_url, sanitize_url: sanitize_url, short_code: "Abcdef")
-        end
+        let(:sanitize_url) { url.strip.downcase.gsub(/(https?:\/\/|(www\.))/, "") }
+        let!(:shortened_url) { create(:shortened_url, sanitize_url: sanitize_url) }
 
         it do
+          short_code = Encode.new(shortened_url.id).call
           shortened_link = service.call.shortened_link
-          expect(shortened_link).to eq("#{ENV["HOST_URL"]}Abcdef")
+          aggregate_failures do
+            expect(shortened_link).to eq("#{ENV["HOST_URL"]}#{short_code}")
+            expect(ShortenedUrl.count).to eq(1)
+          end
         end
       end
 
@@ -47,11 +48,11 @@ describe CreateShortenLink, type: :service do
           
           it do
             result = service.call
-            short_code = ShortenedUrl.last.short_code
+            short_code = Encode.new(ShortenedUrl.last.id).call
 
             aggregate_failures do
               expect(result.errors).to be_blank
-              expect(ShortenedUrl.all.count).to eq(1)
+              expect(ShortenedUrl.count).to eq(1)
               expect(result.shortened_link).to eq("#{ENV["HOST_URL"]}#{short_code}")
             end
           end

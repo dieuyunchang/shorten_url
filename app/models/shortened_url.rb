@@ -4,7 +4,6 @@ class ShortenedUrl < ApplicationRecord
   validates :original_url, presence: true
   validates :original_url, format: {with: ORIGINAL_VALID_URL_FORMAT}, if: :original_url_exist?
   validates :sanitize_url, presence: true
-  validates :short_code, presence: true, on: :update
 
   private
 

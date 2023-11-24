@@ -7,13 +7,15 @@ class CreateShortenLink < ApplicationService
 
   def call
     return error("Url can not be blank") if url.blank?
-    return success(shortened_link: shortened_link(find_duplicate.short_code)) if find_duplicate.present?
+    if find_duplicate.present?
+      short_code = Encode.new(find_duplicate.id).call
+      return success(shortened_link: shortened_link(short_code))
+    end
     
     shortened_url = ShortenedUrl.new(original_url: url, sanitize_url: sanitize_url)
     if shortened_url.valid? && shortened_url.save
       short_code = Encode.new(shortened_url.reload.id).call
       if short_code
-        shortened_url.update(short_code: short_code)
         success(shortened_link: shortened_link(short_code))
       else
         return error("Shorten URL can't be generated")  
@@ -32,7 +34,7 @@ class CreateShortenLink < ApplicationService
   end
 
   def find_duplicate
-    @find_duplicate ||= ShortenedUrl.find_by_sanitize_url sanitize_url
+    ShortenedUrl.find_by_sanitize_url sanitize_url
   end
 
   def sanitize_url
