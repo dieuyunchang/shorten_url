@@ -47,6 +47,7 @@ gem "bootsnap", require: false
 gem "slim"
 gem "shakapacker", "= 7.1"
 gem "react-rails", "= 3.1.1"
+gem 'rack-attack'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

@@ -41,5 +41,6 @@ module ShortenUrl
     config.time_zone = 'Hanoi'
 
     config.exceptions_app = self.routes
+    config.action_controller.default_protect_from_forgery = false if ENV['RAILS_ENV'] == 'development'
   end
 end
