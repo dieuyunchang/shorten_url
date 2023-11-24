@@ -64,6 +64,11 @@ function LinkPage({createShortenedUrl}) {
   const originUrlInput = useRef();
 
   function handleCreateShortLink() {
+    if (!originUrlInput.current.value) {
+      setErrorMessage("Your original url can't be blank!")
+      return;
+    }
+
     const requestBody = { original_url: originUrlInput.current.value }
     const requestData = {
       method: 'POST',
@@ -80,11 +85,17 @@ function LinkPage({createShortenedUrl}) {
         return Promise.reject(response)
       })
       .then(data => {
+        setErrorMessage("")
         setShortenedUrl(data.data.shortened_link);
       })
       .catch(error => {
+        setShortenedUrl("")
         error.json().then((message) => {
-          setErrorMessage(message.error.join(","))
+          if (message.error) {
+            setErrorMessage(message.error.join(","))
+          } else if (message.notice) {
+            
+          }
         })
 
         setShortenedUrl(null);
