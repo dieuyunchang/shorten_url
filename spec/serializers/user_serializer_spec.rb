@@ -7,5 +7,5 @@ describe UserSerializer do
   let(:user) { create(:user) }
   
   it { expect(serialized_resource.as_json).to have_key(:id) }
-  it { expect(serialized_resource.as_json).to have_key(:name) }
+  it { expect(serialized_resource.as_json).to have_key(:email) }
 end
