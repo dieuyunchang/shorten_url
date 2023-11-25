@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import styled from "styled-components"
 import {CopyToClipboard} from 'react-copy-to-clipboard';
+import LoginPage from "./LoginPage";
 
 const LinkPageContainer = styled.div `
   max-width: 1200px;
@@ -57,9 +58,13 @@ const Copied = styled.span `
   color: #00b900;
 `
 
-function LinkPage({createShortenedUrl}) {
+function LinkPage({createShortenedUrl, loginUrl}) {
   const [shortenedUrl, setShortenedUrl] = useState();
   const [errorMessage, setErrorMessage] = useState();
+  const [userToken, setUserToken] = useState(localStorage.getItem("user_token"));
+  const [loginFormVisible, setLoginFormVisible] = useState(userToken ? false : true);
+  const [loginErrorMessage, setLoginErrorMessage] = useState();
+
   const [copied, setCopied] = useState(false);
   const originUrlInput = useRef();
 
@@ -73,7 +78,8 @@ function LinkPage({createShortenedUrl}) {
     const requestData = {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        "Authorization": `Bearer ${userToken}`
       },
       body: JSON.stringify(requestBody)
     };
@@ -89,51 +95,74 @@ function LinkPage({createShortenedUrl}) {
         setShortenedUrl(data.data.shortened_link);
       })
       .catch(error => {
-        setShortenedUrl("")
-        error.json().then((message) => {
-          if (message.error) {
-            setErrorMessage(message.error.join(","))
-          } else if (message.notice) {
-            
-          }
-        })
-
-        setShortenedUrl(null);
+        setShortenedUrl(null)
+        if (error.status == 401) {
+          resetUser()
+        } else {
+          error.json().then((message) => {
+            if (message.error) {
+              setErrorMessage(message.error.join(","))
+            }
+          })
+        }
       });
-  }
+    }
 
-  return( 
-    <LinkPageContainer>
-      <h1>Hello there! Welcome to shorten url service</h1>
+    function resetUser() {
+      setLoginErrorMessage("Please login before continue!")
+      localStorage.user_token = null
+      setUserToken(null)
+      setLoginFormVisible(true)
+    }
 
-      <div className="input">
-        <div>
-          <label> Your Original url:</label>
-        </div>
-        <OriginalUrlInput name="original_url" ref={originUrlInput} />
+    function handleUserLogin(token) {
+      setUserToken(token)
+      setLoginFormVisible(false)
+    }
 
-        <CreateButton onClick={handleCreateShortLink} >Get Shortened url</CreateButton>
-      </div>
-      <div className="shortened-url-wrapper">
-        { 
-          shortenedUrl && 
-            <ShortenedUrl>
-              <h5>Your shorten Url: </h5>
-              <div className="shortened-url">
-                <span>{shortenedUrl}</span>
-                <CopyToClipboard text={shortenedUrl}
-                  onCopy={() => setCopied(true)}>
-                  <CopyToClipboardButton>Click here to copy</CopyToClipboardButton>
-                </CopyToClipboard>
-                {copied && <Copied>Copied.</Copied>}
-              </div> 
-            </ShortenedUrl>
-        }
-        { errorMessage && 
-          <Error>Opps! Something went wrong: '{errorMessage}'. Please try again!</Error> 
-        }
-      </div>
-    </LinkPageContainer>
+  return(
+    <>
+    {
+      userToken && !loginFormVisible &&
+        <LinkPageContainer>
+          <h1>Hello {localStorage.getItem("user_email") || "there" }! Welcome to shorten url service</h1>
+
+          <div className="input">
+            <div>
+              <label> Your Original url:</label>
+            </div>
+            <OriginalUrlInput name="original_url" ref={originUrlInput} />
+
+            <CreateButton onClick={handleCreateShortLink} >Get Shortened url</CreateButton>
+          </div>
+          <div className="shortened-url-wrapper">
+            { 
+              shortenedUrl && 
+                <ShortenedUrl>
+                  <h5>Your shorten Url: </h5>
+                  <div className="shortened-url">
+                    <span>{shortenedUrl}</span>
+                    <CopyToClipboard text={shortenedUrl}
+                      onCopy={() => setCopied(true)}>
+                      <CopyToClipboardButton>Click here to copy</CopyToClipboardButton>
+                    </CopyToClipboard>
+                    {copied && <Copied>Copied.</Copied>}
+                  </div> 
+                </ShortenedUrl>
+            }
+            { errorMessage && 
+              <Error>Opps! Something went wrong: '{errorMessage}'. Please try again!</Error> 
+            }
+          </div>
+        </LinkPageContainer>
+    }
+    <LoginPage
+      visible={loginFormVisible}
+      loginUrl={loginUrl}
+      onLogin={handleUserLogin}
+      defaultErrorMessage={loginErrorMessage}
+    />
+    </>
   )
 }
 

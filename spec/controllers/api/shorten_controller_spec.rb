@@ -2,8 +2,13 @@
 
 require "rails_helper"
 describe Api::ShortenController, type: :controller do
-
   describe "#create" do
+    before do
+      user = create(:user)
+      secret = Rails.application.credentials.devise_jwt_secret_key
+      request.headers["Authorization"] = JWT.encode({ sub: user.id, jti: user.jti }, secret)
+    end
+
     context "when original_url is invalid" do
       let(:original_url) { "googlecom" }
 
