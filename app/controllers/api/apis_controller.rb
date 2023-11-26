@@ -21,7 +21,7 @@ class Api::ApisController < ApplicationController
       return
     end
     
-    jwt_payload = JWT.decode(request.headers['Authorization'].split(' ').last, Rails.application.credentials.devise_jwt_secret_key).first
+    jwt_payload = JWT.decode(request.headers['Authorization'].split(' ').last, ENV["DEVISE_JWT_SECRET_KEY"]).first
     
     @current_user = User.find_by_jti(jwt_payload['jti'])
     unless @current_user
