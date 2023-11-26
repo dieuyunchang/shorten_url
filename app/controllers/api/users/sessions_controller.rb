@@ -2,7 +2,8 @@
 
 class Api::Users::SessionsController < Devise::SessionsController
   respond_to :json
-
+  protect_from_forgery unless: -> { request.format.json? }
+  
   private
 
   def respond_with(current_user, _opts = {})

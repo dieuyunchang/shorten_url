@@ -2,6 +2,7 @@
 
 class Api::Users::RegistrationsController < Devise::RegistrationsController
   respond_to :json
+  protect_from_forgery unless: -> { request.format.json? }
 
   private
 
