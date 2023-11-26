@@ -5,7 +5,7 @@ describe Api::ShortenController, type: :controller do
   describe "#create" do
     before do
       user = create(:user)
-      secret = Devise.secret_key
+      secret = Rails.application.credentials.devise_jwt_secret_key
       request.headers["Authorization"] = JWT.encode({ sub: user.id, jti: user.jti }, secret)
     end
 
