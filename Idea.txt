@@ -77,3 +77,12 @@ please read the README.md file for more information.
   - Auto scaling and load balancer will be the best help on this situation, we can make the server scale up or down by matching traffic. You can decided the which kind of scaling, horizontal with adding more
   server/machine, vertical scaling with increasing the RAM memory or the server power. Load balancer can help to void the overload of each server.
   - It also helps to reduce or balance the cost.
+
+
+An great idea from the Oivan leader: Cảnh
+Because we still need to check the existing value in the database, so to void it we can store all the short_code into one table and get it one by one for each request.
+We can delete the record when it used and create back when destroy the shorten_url record
+We will have 6^62 with 6 is character length, 62 is the alphabet character that can be assigned
+`Encode::ALPHABET.length`
+The solution is till have limit because the request can more than 6^62, so we can have more column for country ip, or can use sub domain,..
+
